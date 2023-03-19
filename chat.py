@@ -54,7 +54,7 @@ except:
 
     msg = client.recv(1024)
     n = pickle.loads(msg)
-    client.send((pickle.dumps(keys[0])))  # the n value
+    client.send(pickle.dumps(keys[0]))  # the n value
 
     # set the public key of the other instance
     rsa.set_public_key(n, e)
