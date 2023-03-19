@@ -34,11 +34,13 @@ try:
             m = str(m).encode("utf8")
             client.send(m)
 
+        message = ""
         msg = client.recv(1024).decode("utf8")
         # bytes to int
         msg = int(msg)
         # decode the message
         msg = rsa.decode([msg])
+        message += msg
         print(msg)
 
 
