@@ -2,6 +2,7 @@
 import socket
 from struct import pack, unpack
 import RSA
+import pickle
 
 # create socket object
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -15,12 +16,12 @@ try:
     client, address = sock.accept()
     # the server sends the public key to the client
     # the server receives the public key from the client
-    client.send(str(keys[1]).encode("utf8"))  # the e value
-    msg = client.recv(1024).decode("utf8")
-    e = int(msg)
-    client.send(str(keys[0]).encode("utf8"))  # the n value
-    msg = client.recv(1024).decode("utf8")
-    n = int(msg)
+    client.send(pickle.dumps(keys[1]))  # the e value
+    msg = client.recv(1024)
+    e = pickle.loads(msg)
+    client.send(pickle.dumps(keys[0]))  # the n value
+    msg = client.recv(1024)
+    n = pickle.loads(msg)
 
     # set the public key of the other instance
     rsa.set_public_key(n, e)
@@ -30,17 +31,13 @@ try:
 
         msg = input("Enter message: ")
         msg = rsa.encode(msg)
-        for m in msg:
-            m = str(m).encode("utf8")
-            client.send(m)
+        msg = pickle.dumps(msg)
+        client.send(msg)
 
-        message = ""
-        msg = client.recv(1024).decode("utf8")
-        # bytes to int
-        msg = int(msg)
+        msg = client.recv(1024)
+        msg = pickle.loads(msg)
         # decode the message
-        msg = rsa.decode([msg])
-        message += msg
+        msg = rsa.decode(msg)
         print(msg)
 
 
@@ -51,13 +48,13 @@ except:
     # the client receives the public key from the server
     # the client sends the public key to the server
 
-    msg = client.recv(1024).decode("utf8")
-    e = int(msg)
-    client.send(str(keys[1]).encode("utf8"))  # the e value
+    msg = client.recv(1024)
+    e = pickle.loads(msg)
+    client.send(pickle.dumps(keys[1]))  # the e value
 
-    msg = client.recv(1024).decode("utf8")
-    n = int(msg)
-    client.send(str(keys[0]).encode("utf8"))  # the n value
+    msg = client.recv(1024)
+    n = pickle.loads(msg)
+    client.send((pickle.dumps(keys[0])))  # the n value
 
     # set the public key of the other instance
     rsa.set_public_key(n, e)
@@ -67,19 +64,16 @@ except:
 
     while 1:
 
-        msg = client.recv(1024).decode("utf8")
-        # bytes to int
-        msg = int(msg)
-        print(msg)
+        msg = client.recv(1024)
+        msg = pickle.loads(msg)
         # decode the message
-        msg = rsa.decode([msg])
+        msg = rsa.decode(msg)
         print(msg)
 
         msg = input("Enter message: ")
         msg = rsa.encode(msg)
-        for m in msg:
-            m = str(m).encode("utf8")
-            client.send(m)
+        msg = pickle.dumps(msg)
+        client.send(msg)
 
 # close the socket
 sock.close()
