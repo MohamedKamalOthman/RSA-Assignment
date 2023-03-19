@@ -10,6 +10,7 @@ class RSA:
         self.n = None
         self.e = None
         self.d = None
+        self.bits = 18
 
     def generate_keys(self):
         print("Generating keys...")
@@ -68,7 +69,11 @@ class RSA:
         return message
 
     def __generate_primes(self):
-        self.primes = [i for i in range(1000, 100000) if self.__is_prime(i)]
+        self.primes = [
+            i
+            for i in range(2 ** (self.bits - 1), 2 ** (self.bits))
+            if self.__is_prime(i)
+        ]
 
     @staticmethod
     def __is_prime(n):
@@ -124,7 +129,7 @@ def test():
     rsa = RSA()
     keys = rsa.generate_keys()
     rsa.set_private_key(*keys)
-    cipher = rsa.encode("hi s7")
+    cipher = rsa.encode("hello world")
     print(cipher)
     print(rsa.decode(cipher))
 
