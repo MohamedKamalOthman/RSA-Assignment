@@ -33,8 +33,8 @@ class RSA:
         print("Public key: ", (self.n, e))
         return (self.n, e)
 
-    def set_private_key(self, n, e):
-        self.n, self.e = n, e
+    def set_public_key(self, pn, e):
+        self.pn, self.e = pn, e
         pass
 
     def encode(self, message: str):
@@ -48,19 +48,19 @@ class RSA:
         blocks = [self.__convert_block(block) for block in blocks]
         # convert each number to cipher text using fast modular exponentiation
         blocks = [
-            self.__fast_modular_exponentiation(block, self.e, self.n)
+            self.__fast_modular_exponentiation(block, self.d, self.n)
             for block in blocks
         ]
         return blocks
 
     def decode(self, ciphertext_blocks) -> str:
-        if self.n is None or self.e is None:
+        if self.pn is None or self.e is None:
             raise Exception("n and e must be set first first")
         # convert cipher text to message using fast modular exponentiation
         message = ""
         for cipher in ciphertext_blocks:
             block = ""
-            deciphered = self.__fast_modular_exponentiation(cipher, self.d, self.n)
+            deciphered = self.__fast_modular_exponentiation(cipher, self.e, self.pn)
             for _ in range(5):
                 m = deciphered % 37
                 deciphered //= 37
@@ -128,10 +128,10 @@ def test():
     print("RSA.py loaded")
     rsa = RSA()
     keys = rsa.generate_keys()
-    rsa.set_private_key(*keys)
-    cipher = rsa.encode("hello world")
+    rsa.set_public_key(*keys)
+    cipher = rsa.encode("hello world, i am a message")
     print(cipher)
     print(rsa.decode(cipher))
 
 
-test()
+# test()
