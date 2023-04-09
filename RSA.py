@@ -1,5 +1,7 @@
 import random
 from Mapping import MAPPING, INVERSE_MAPPING
+from Crypto.Util import number
+import os
 
 
 class RSA:
@@ -10,15 +12,15 @@ class RSA:
         self.n = None
         self.e = None
         self.d = None
-        self.bits = 18
+        self.bits = 1024
 
     def generate_keys(self):
         print("Generating keys...")
         print("Generating p and q...")
-        if self.primes is None:
-            self.__generate_primes()
-        self.p = random.choice(self.primes)
-        self.q = random.choice(self.primes)
+        # generate p and q 
+        self.p = number.getPrime(self.bits, randfunc=os.urandom)
+        self.q = number.getPrime(self.bits, randfunc=os.urandom)
+        # compute n
         self.n = self.p * self.q
         # compute phi(n)
         phi = (self.p - 1) * (self.q - 1)

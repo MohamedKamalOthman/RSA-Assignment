@@ -1,6 +1,5 @@
 # creating chatting server client using socket programming
 import socket
-from struct import pack, unpack
 import RSA
 import pickle
 
