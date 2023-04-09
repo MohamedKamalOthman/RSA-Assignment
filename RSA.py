@@ -6,6 +6,7 @@ import os
 
 class RSA:
     def __init__(self):
+        self.suppress_print = False
         self.primes = None
         self.p = None
         self.q = None
@@ -15,9 +16,10 @@ class RSA:
         self.bits = 1024
 
     def generate_keys(self):
-        print("Generating keys...")
-        print("Generating p and q...")
-        # generate p and q 
+        if not self.suppress_print:
+            print("Generating keys...")
+            print("Generating p and q...")
+        # generate p and q
         self.p = number.getPrime(self.bits, randfunc=os.urandom)
         self.q = number.getPrime(self.bits, randfunc=os.urandom)
         # compute n
@@ -31,8 +33,9 @@ class RSA:
         # compute d where (d * e) % phi(n) = 1
         self.d = self.__modular_inverse(e, phi)
         # return public key (n, e)
-        print("Finished generating keys")
-        print("Public key: ", (self.n, e))
+        if not self.suppress_print:
+            print("Finished generating keys")
+            print("Public key: ", (self.n, e))
         return (self.n, e)
 
     def set_public_key(self, pn, e):
