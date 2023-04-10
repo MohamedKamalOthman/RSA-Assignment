@@ -16,8 +16,10 @@ message = "hi s7"
 def encryption_decryption_analysis():
     """Analyze the encryption/decryption time of RSA algorithm"""
     global rsa_victim, rsa_attacker, message
+    # Arrays to store the results
     decryption_times = []
     encryption_times = []
+    # create a list of numbers of bits to analyze from 16 to 2048 with a step of 8
     x_axis = range(16, 2048, 8)
     # analyze the encryption/decryption time
     for i in x_axis:
@@ -91,8 +93,9 @@ def brute_force_analysis():
 def factorization_analysis():
     """Analyze the attack time of RSA algorithm by factoring n"""
     global rsa_victim, rsa_attacker, message
-
+    # Array to store the results
     attack_times = []
+    # Create a list of numbers of bits to analyze from 10 to 64
     x_axis = range(10, 64)
 
     # factorize n
@@ -101,17 +104,19 @@ def factorization_analysis():
         # initialize p and q
         p = 0
         q = 0
-        # loop over all numbers from 1 to n
+        # Check if n is even
+        if n * 2 == 0:
+            p = 2
+            q = n // 2
+            return p, q
+
+        # loop over all numbers from 1 to n with a step of 2 to avoid even numbers
         for i in range(3, int((n + 1) ** (1 / 2)), 2):
             # if i is a factor of n
             if n % i == 0:
                 p = i
                 q = n // i
-                break
-        if p == 0 or q == 0:
-            p = 2
-            q = n // 2
-        return p, q
+                return p, q
 
     # loop over different number of bits
     for i in x_axis:
@@ -136,7 +141,7 @@ def factorization_analysis():
 def main():
     """Main function"""
     encryption_decryption_analysis()
-    brute_force_analysis()
+    # brute_force_analysis()
     factorization_analysis()
 
 
