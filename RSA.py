@@ -100,6 +100,7 @@ class RSA:
 
     @staticmethod
     def __convert_block(block):
+        """Convert a block of 5 characters to a number"""
         sum = 0
         for i in range(len(block)):
             sum += MAPPING.get(block[i], 36) * 37 ** (4 - i)
@@ -107,13 +108,18 @@ class RSA:
 
 
 def test():
-    print("RSA.py loaded")
+    """Test RSA.py"""
     rsa = RSA()
+    rsa.suppress_print = True
+    message = "1234554321"
     keys = rsa.generate_keys()
     rsa.set_public_key(*keys)
-    cipher = rsa.encode("hello world, i am a message")
-    print(cipher)
-    print(rsa.decode(cipher))
+    cipher = rsa.encode(message)
+    decoded_message = rsa.decode(cipher)
+    # assert that the message is the same after encoding and decoding if not then print the differences
+    assert (
+        message == decoded_message
+    ), f"message: {message} decoded_message: {decoded_message}"
 
 
-# test()
+test()
