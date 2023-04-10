@@ -88,7 +88,15 @@ class RSA:
     @staticmethod
     def __fast_modular_exponentiation(b, e, m):
         """Calculate (b^e) % m"""
-        return pow(b, e, m)
+        r = 1
+        if 1 & e:
+            r = b
+        while e:
+            e >>= 1
+            b = (b * b) % m
+            if e & 1:
+                r = (r * b) % m
+        return r
 
     @staticmethod
     def __convert_block(block):

@@ -26,33 +26,27 @@ def encryption_decryption_analysis():
         n, e = rsa_victim.generate_keys()
         rsa_victim.set_public_key(n, e)
         # encode message
-        start = time.time()
+        start = time.time_ns()
         cipher = rsa_victim.encode(message)
-        end = time.time()
-        encryption_times.append(end - start)
+        end = time.time_ns()
+        encryption_times.append((end - start) / 1e6)
         # decode message
-        start = time.time()
+        start = time.time_ns()
         message = rsa_victim.decode(cipher)
-        end = time.time()
-        decryption_times.append(end - start)
+        end = time.time_ns()
+        decryption_times.append((end - start) / 1e6)
 
     # plot encryption time
     plt.plot(x_axis, encryption_times)
-    plt.title("Encryption time vs number of bits")
-    plt.xlabel("Number of bits")
-    plt.ylabel("Encryption time (s)")
-    plt.show()
-    # save the plot
-    plt.savefig("encryption_time.png")
-
     # plot decryption time
     plt.plot(x_axis, decryption_times)
-    plt.title("Decryption time vs number of bits")
+    plt.title("Encryption/Decryption time vs number of bits")
     plt.xlabel("Number of bits")
-    plt.ylabel("Decryption time (s)")
-    plt.show()
+    plt.ylabel("time (ms)")
+    plt.legend(["Encryption", "Decryption"])
     # save the plot
-    plt.savefig("decryption_time.png")
+    plt.savefig("encryption_decryption_time.png")
+    plt.close()
 
 
 def brute_force_analysis():
@@ -72,7 +66,7 @@ def brute_force_analysis():
         rsa_attacker.n = n
         # Encode message
         cipher = rsa_victim.encode(message)
-        start = time.time()
+        start = time.time_ns()
         # loop over all possible values of d
         for j in range(0, 2**i):
             rsa_attacker.d = j
@@ -80,17 +74,18 @@ def brute_force_analysis():
             if rsa_attacker.decode(cipher) == message:
                 print("Cracked Private Key: ", j)
                 break
-        end = time.time()
-        brute_force_times.append(end - start)
+        end = time.time_ns()
+        brute_force_times.append((end - start) / 1e9)
 
     # plot the results
     plt.plot(x_axis, brute_force_times)
     plt.title("Brute force attack time vs number of bits")
     plt.xlabel("Number of bits")
     plt.ylabel("Attack time (s)")
-    plt.show()
+    plt.xticks(x_axis)
     # save the plot
     plt.savefig("brute_force_attack_time.png")
+    plt.close()
 
 
 def factorization_analysis():
@@ -98,7 +93,7 @@ def factorization_analysis():
     global rsa_victim, rsa_attacker, message
 
     attack_times = []
-    x_axis = range(2, 60)
+    x_axis = range(10, 64)
 
     # factorize n
     def factor(n):
@@ -123,17 +118,16 @@ def factorization_analysis():
         rsa_victim.bits = i
         n, e = rsa_victim.generate_keys()
         # attack by factorizing n
-        start = time.time()
+        start = time.time_ns()
         factor(n)
-        end = time.time()
-        attack_times.append(end - start)
+        end = time.time_ns()
+        attack_times.append((end - start) / 1e9)
 
     # plot attack with matplotlib
     plt.plot(x_axis, attack_times)
     plt.title("Attack time vs number of bits")
     plt.xlabel("Number of bits")
     plt.ylabel("Attack time (s)")
-    plt.show()
     # save the plot
     plt.savefig("attack_time.png")
 
@@ -141,7 +135,7 @@ def factorization_analysis():
 def main():
     """Main function"""
     encryption_decryption_analysis()
-    brute_force_analysis()
+    # brute_force_analysis()
     factorization_analysis()
 
 
