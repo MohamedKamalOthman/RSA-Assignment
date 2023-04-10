@@ -10,74 +10,140 @@ import matplotlib.pyplot as plt
 rsa_victim = RSA.RSA()
 rsa_victim.suppress_print = True
 rsa_attacker = RSA.RSA()
+message = "hi s7"
 
 
-# known plaintext message
-message = "Hello World"
+def encryption_decryption_analysis():
+    """Analyze the encryption/decryption time of RSA algorithm"""
+    global rsa_victim, rsa_attacker, message
+    decryption_times = []
+    encryption_times = []
+    x_axis = range(16, 2048, 8)
+    # analyze the encryption/decryption time
+    for i in x_axis:
+        # generate keys
+        rsa_victim.bits = i
+        n, e = rsa_victim.generate_keys()
+        rsa_victim.set_public_key(n, e)
+        # encode message
+        start = time.time()
+        cipher = rsa_victim.encode(message)
+        end = time.time()
+        encryption_times.append(end - start)
+        # decode message
+        start = time.time()
+        message = rsa_victim.decode(cipher)
+        end = time.time()
+        decryption_times.append(end - start)
+
+    # plot encryption time
+    plt.plot(x_axis, encryption_times)
+    plt.title("Encryption time vs number of bits")
+    plt.xlabel("Number of bits")
+    plt.ylabel("Encryption time (s)")
+    plt.show()
+    # save the plot
+    plt.savefig("encryption_time.png")
+
+    # plot decryption time
+    plt.plot(x_axis, decryption_times)
+    plt.title("Decryption time vs number of bits")
+    plt.xlabel("Number of bits")
+    plt.ylabel("Decryption time (s)")
+    plt.show()
+    # save the plot
+    plt.savefig("decryption_time.png")
 
 
-# factorize n
-def factor(n):
-    # initialize p and q
-    p = 0
-    q = 0
-    # loop over all numbers from 1 to n
-    for i in range(1, int((n + 1) ** (1 / 2))):
-        # if i is a factor of n
-        if n % i == 0:
-            p = i
-            q = n // i
-    return p, q
+def brute_force_analysis():
+    """Analyze the attack time of RSA algorithm by brute force"""
+    global rsa_victim, rsa_attacker, message
+
+    brute_force_times = []
+    x_axis = range(27, 32)
+
+    # loop from 1 to 30 bits brute force attack
+    for i in x_axis:
+        # Set the number of bits
+        rsa_victim.bits = i
+        # Generate keys
+        n, e = rsa_victim.generate_keys()
+        rsa_victim.set_public_key(n, e)
+        rsa_attacker.n = n
+        # Encode message
+        cipher = rsa_victim.encode(message)
+        start = time.time()
+        # loop over all possible values of d
+        for j in range(0, 2**i):
+            rsa_attacker.d = j
+            # if the decrypted message is the same as the original message then break
+            if rsa_attacker.decode(cipher) == message:
+                print("Cracked Private Key: ", j)
+                break
+        end = time.time()
+        brute_force_times.append(end - start)
+
+    # plot the results
+    plt.plot(x_axis, brute_force_times)
+    plt.title("Brute force attack time vs number of bits")
+    plt.xlabel("Number of bits")
+    plt.ylabel("Attack time (s)")
+    plt.show()
+    # save the plot
+    plt.savefig("brute_force_attack_time.png")
 
 
-encryption_times = []
-decryption_times = []
-attack_times = []
-# loop over different number of bits from 1 to 28
-for i in range(2, 20):
-    # generate keys
-    rsa_victim.bits = i
-    n, e = rsa_victim.generate_keys()
-    # attack by factorising n
-    start = time.time()
-    p, q = factor(n)
-    end = time.time()
-    attack_times.append(end - start)
+def factorization_analysis():
+    """Analyze the attack time of RSA algorithm by factoring n"""
+    global rsa_victim, rsa_attacker, message
 
-# plot attack with matplotlib
-plt.plot(attack_times)
-plt.title("Attack time vs number of bits")
-plt.xlabel("Number of bits")
-plt.ylabel("Attack time (s)")
-plt.show()
+    attack_times = []
+    x_axis = range(2, 60)
 
-# analyze the encryption/decryption time
-for i in range(2, 1024):
-    # generate keys
-    rsa_victim.bits = i
-    n, e = rsa_victim.generate_keys()
-    rsa_victim.set_public_key(n, e)
-    # encode message
-    start = time.time()
-    cipher = rsa_victim.encode(message)
-    end = time.time()
-    encryption_times.append(end - start)
-    # decode message
-    start = time.time()
-    message = rsa_victim.decode(cipher)
-    end = time.time()
-    decryption_times.append(end - start)
+    # factorize n
+    def factor(n):
+        # initialize p and q
+        p = 0
+        q = 0
+        # loop over all numbers from 1 to n
+        for i in range(3, int((n + 1) ** (1 / 2)), 2):
+            # if i is a factor of n
+            if n % i == 0:
+                p = i
+                q = n // i
+                break
+        if p == 0 or q == 0:
+            p = 2
+            q = n // 2
+        return p, q
 
-# plot encryption time
-plt.plot(encryption_times)
-plt.title("Encryption time vs number of bits")
-plt.xlabel("Number of bits")
-plt.ylabel("Encryption time (s)")
-plt.show()
+    # loop over different number of bits from 1 to 28
+    for i in x_axis:
+        # generate keys
+        rsa_victim.bits = i
+        n, e = rsa_victim.generate_keys()
+        # attack by factorizing n
+        start = time.time()
+        factor(n)
+        end = time.time()
+        attack_times.append(end - start)
 
-# plot decryption time
-plt.plot(decryption_times)
-plt.title("Decryption time vs number of bits")
-plt.xlabel("Number of bits")
-plt.ylabel("Decryption time (s)")
-plt.show()
+    # plot attack with matplotlib
+    plt.plot(x_axis, attack_times)
+    plt.title("Attack time vs number of bits")
+    plt.xlabel("Number of bits")
+    plt.ylabel("Attack time (s)")
+    plt.show()
+    # save the plot
+    plt.savefig("attack_time.png")
+
+
+def main():
+    """Main function"""
+    encryption_decryption_analysis()
+    brute_force_analysis()
+    factorization_analysis()
+
+
+if __name__ == "__main__":
+    main()
