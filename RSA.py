@@ -47,6 +47,7 @@ class RSA:
         self.pn, self.e = pn, e
 
     def encode(self, message: str) -> list:
+        """Encode a message into a list of cipher text blocks"""
         if self.pn is None or self.e is None:
             raise Exception("n and e must be set first first")
         # split message into blocks of 5 characters and append space if necessary
@@ -97,7 +98,7 @@ class RSA:
 
     @staticmethod
     def __egcd(a, b) -> tuple:
-        """Extended Euclidean Algorithm for calculating the modular inverse"""
+        """Extended Euclidean Algorithm for calculating the gcd of a and b"""
         p1 = 1
         q1 = 0
         h1 = a

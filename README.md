@@ -40,7 +40,7 @@ The analysis shows that the time taken to break the key **increases exponentiall
 The following graph shows the time taken to break the key using prime factorization method:
 ![attack_time](attack_time.png)
 
-> Note: When using number of bits below 27 is presented only for for comparison but the message will not be encrypted correctly because the key will be too small to encrypt the message.
+> Note: When using number of bits below 27 is presented only for comparison but the message will not be encrypted correctly because the key will be too small to encrypt the message.
 
 The following graph shows the time taken to break the key using brute force method:
 ![brute_force_attack_time](brute_force_attack_time.png)
@@ -51,5 +51,3 @@ Both the encryption and decryption time **increases exponentially** because the 
 
 The following graph shows the time taken to encrypt and decrypt the message:
 ![(encryption_decryption_time](encryption_decryption_time.png)
-
-The time taken to break the key is much higher than the time taken to encrypt and decrypt the message because the key breaking process is done using a **brute force method**. This means that the program tries all possible keys to find the correct key. This is why the time taken to break the key increases exponentially with the increase in the number of bits.
