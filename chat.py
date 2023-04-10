@@ -1,6 +1,6 @@
 # creating chatting server client using socket programming
-import socket
 import RSA
+import socket
 import pickle
 
 # create socket object

@@ -134,15 +134,16 @@ def factorization_analysis():
     plt.title("Attack time vs number of bits")
     plt.xlabel("Number of bits")
     plt.ylabel("Attack time (s)")
+    plt.xticks(range(10, 64, 2))
     # save the plot
     plt.savefig("attack_time.png")
 
 
 def main():
     """Main function"""
-    encryption_decryption_analysis()
-    # brute_force_analysis()
-    factorization_analysis()
+    # encryption_decryption_analysis()
+    brute_force_analysis()
+    # factorization_analysis()
 
 
 if __name__ == "__main__":
