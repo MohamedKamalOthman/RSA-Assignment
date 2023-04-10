@@ -54,7 +54,7 @@ def brute_force_analysis():
     global rsa_victim, rsa_attacker, message
 
     brute_force_times = []
-    x_axis = range(10, 27)
+    x_axis = range(27, 34)
 
     # loop from 1 to 30 bits brute force attack
     for i in x_axis:
@@ -135,9 +135,9 @@ def factorization_analysis():
 
 def main():
     """Main function"""
-    # encryption_decryption_analysis()
+    encryption_decryption_analysis()
     brute_force_analysis()
-    # factorization_analysis()
+    factorization_analysis()
 
 
 if __name__ == "__main__":
