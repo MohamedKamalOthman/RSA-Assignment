@@ -58,7 +58,7 @@ def brute_force_analysis():
     brute_force_times = []
     x_axis = range(27, 34)
 
-    # loop from 1 to 30 bits brute force attack
+    # loop over to brute force attack
     for i in x_axis:
         # Set the number of bits
         rsa_victim.bits = i
@@ -110,7 +110,7 @@ def factorization_analysis():
             q = n // 2
             return p, q
 
-        # loop over all numbers from 1 to n with a step of 2 to avoid even numbers
+        # loop over odd numbers
         for i in range(3, int((n + 1) ** (1 / 2)), 2):
             # if i is a factor of n
             if n % i == 0:
@@ -141,8 +141,8 @@ def factorization_analysis():
 
 def main():
     """Main function"""
-    # encryption_decryption_analysis()
-    # brute_force_analysis()
+    encryption_decryption_analysis()
+    brute_force_analysis()
     factorization_analysis()
 
 
