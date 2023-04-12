@@ -1,6 +1,4 @@
 # creating chatting server client using socket programming
-import select
-import time
 import RSA
 import socket
 import pickle
@@ -11,6 +9,7 @@ import sys
 sock = None
 
 
+# CTRL + C handler to close the program
 def signal_handler(sig, frame):
     """Handle the SIGINT signal"""
     global sock
@@ -71,10 +70,8 @@ def send_message(sock, rsa):
         num = len(msg)
         sock.send(pickle.dumps(num))
         for block in msg:
-            # sleep to avoid buffer overrun
-            time.sleep(0.1)
             block = pickle.dumps(block)
-            # using send all to send even if buffer was full
+            # send data
             sock.sendall(block)
 
 
@@ -84,9 +81,20 @@ def recv_message(sock, rsa):
         blocks = []
         block = ""
         # get number of blocks
-        num = pickle.loads(sock.recv(1024))
+        while 1:
+            try:
+                num = pickle.loads(sock.recv(2048))
+                break
+            except:
+                continue
         while num != 0:
-            block = sock.recv(1024)
+            # receive data
+            while 1:
+                try:
+                    block = sock.recv(2048)
+                    break
+                except:
+                    continue
             block = pickle.loads(block)
             blocks.append(block)
             num -= 1
@@ -110,6 +118,9 @@ def main():
 
     # exchange keys
     exchange_keys(sock, rsa)
+
+    # set socket to non-blocking
+    sock.setblocking(False)
 
     # creating threads
     # Send message thread
