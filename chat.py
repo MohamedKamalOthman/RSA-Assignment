@@ -3,9 +3,28 @@ import RSA
 import socket
 import pickle
 import threading
+import signal
+import sys
+
+sock = None
+
+
+def signal_handler(sig, frame):
+    """Handle the SIGINT signal"""
+    global sock
+    # close the socket
+    if sock is not None:
+        sock.close()
+        sock = None
+    # exit the program
+    sys.exit(0)
+
+
+signal.signal(signal.SIGINT, signal_handler)
 
 
 def exchange_keys(sock, rsa):
+    """Exchange the public keys between the server/client"""
     # generate keys
     keys = rsa.generate_keys()
     # the server/client sends the public key to the client
@@ -23,6 +42,7 @@ def exchange_keys(sock, rsa):
 
 
 def sock_connect(sock, port=4321):
+    """Connect to the server/client"""
     # create socket object if it was not created then this instance is a server
     try:
         sock.bind(("localhost", port))
@@ -37,9 +57,12 @@ def sock_connect(sock, port=4321):
 
 
 def send_message(sock, rsa):
+    """Send the message to the server/client"""
     while True:
         # read the message
-        msg = input("Enter message: ")
+        msg = input()
+        if msg is None or msg == "":
+            continue
         # encode the message
         msg = rsa.encode(msg)
         msg = pickle.dumps(msg)
@@ -47,15 +70,18 @@ def send_message(sock, rsa):
 
 
 def recv_message(sock, rsa):
+    """Receive the message from the server/client"""
     while True:
         msg = sock.recv(4096)
         msg = pickle.loads(msg)
         # decode the message
         msg = rsa.decode(msg)
-        print(msg)
+        print(f"Received Message: {msg}")
 
 
 def main():
+    """Main function"""
+    global sock
     # create socket object
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -70,9 +96,9 @@ def main():
 
     # creating threads
     # Send message thread
-    t1 = threading.Thread(target=send_message, args=(sock, rsa), name="t1")
+    t1 = threading.Thread(target=send_message, args=(sock, rsa), name="t1", daemon=True)
     # Receive message thread
-    t2 = threading.Thread(target=recv_message, args=(sock, rsa), name="t2")
+    t2 = threading.Thread(target=recv_message, args=(sock, rsa), name="t2", daemon=True)
 
     # starting threads
     t1.start()
@@ -83,7 +109,9 @@ def main():
     t2.join()
 
     # close the socket
-    sock.close()
+    if sock is not None:
+        sock.close()
+        sock = None
 
 
 if __name__ == "__main__":
