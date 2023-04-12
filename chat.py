@@ -1,4 +1,6 @@
 # creating chatting server client using socket programming
+import select
+import time
 import RSA
 import socket
 import pickle
@@ -65,17 +67,32 @@ def send_message(sock, rsa):
             continue
         # encode the message
         msg = rsa.encode(msg)
-        msg = pickle.dumps(msg)
-        sock.send(msg)
+        # send number of blocks upfront
+        num = len(msg)
+        sock.send(pickle.dumps(num))
+        for block in msg:
+            # sleep to avoid buffer overrun
+            time.sleep(0.1)
+            block = pickle.dumps(block)
+            # using send all to send even if buffer was full
+            sock.sendall(block)
 
 
 def recv_message(sock, rsa):
     """Receive the message from the server/client"""
     while True:
-        msg = sock.recv(4096)
-        msg = pickle.loads(msg)
+        blocks = []
+        block = ""
+        # get number of blocks
+        num = pickle.loads(sock.recv(1024))
+        while num != 0:
+            block = sock.recv(1024)
+            block = pickle.loads(block)
+            blocks.append(block)
+            num -= 1
+
         # decode the message
-        msg = rsa.decode(msg)
+        msg = rsa.decode(blocks)
         print(f"Received Message: {msg}")
 
 
