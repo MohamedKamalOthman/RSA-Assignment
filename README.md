@@ -1,6 +1,8 @@
 # RSA-Assignment
+<div id="header" align="center">
 
-This is a repository for the RSA assignment.
+  <img align="center" src="https://user-images.githubusercontent.com/76039756/232135957-8f362f32-a8e9-425b-b879-f1dda4ee63d6.gif"/>
+</div>
 
 ## How to run the program
 
