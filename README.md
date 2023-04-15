@@ -1,10 +1,17 @@
-# RSA-Assignment
+# 🔐 RSA-Algorithm
+<div id="header" align="center">
+
+  <img align="center" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMzM1MzM5NWZiNTY1Y2VjODM3ODI5Yjg0NWE4ZjVhNWY4Y2JkY2UwMiZjdD1n/rQcEj8UVOC6QvJs36s/giphy.gif"/>
+</div>
+
+
+# 💡 How it works
 <div id="header" align="center">
 
   <img align="center" src="https://user-images.githubusercontent.com/76039756/232135957-8f362f32-a8e9-425b-b879-f1dda4ee63d6.gif"/>
 </div>
 
-## How to run the program
+## ⚙️ How to run the program
 
 1. Clone the repository
 2. make sure you have python 3.x installed
@@ -31,11 +38,11 @@
 python analysis.py
 ```
 
-## How to use the program
+## 🤖 How to use the program
 
 The program is divided into two parts: chatting and analysis. The chatting program is used to send and receive encrypted messages. The analysis program is used to perform analysis on how the number of bits (Key size) affect the key breaking process using two methods which are **Prime Factorization** and **Brute force**. The analysis program also shows the time taken to encrypt and decrypt the message as well.
 
-## Conclusion
+## ✍️ Conclusion
 
 The analysis shows that the time taken to break the key **increases exponentially** with the increase in the number of bits.
 
